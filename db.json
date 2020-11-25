@@ -1,0 +1,27 @@
+[
+{
+    "title": "My 1st title",
+    "content": "A quick brown fox jumped over ... a fence once more!!",
+    "author": "Pam A.",
+    "category": "programming",
+    "comments": [
+        {
+            "content": "Awesome comment 1",
+            "author": "Hugh Hef.",
+            "rating": 99
+        },
+        {
+           "content": "Awesome comment 2",
+            "author": "Howard St.",
+            "rating": 101
+        }
+    ]
+}
+,
+{
+    "title": "My 2nd title",
+    "content": "A quick brown fox jumped over ... a fence!!",
+    "author": "The Hoff",
+    "category": "programming"
+}
+]
