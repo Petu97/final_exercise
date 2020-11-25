@@ -1,7 +1,12 @@
-// setup everything...
-const port = 3000;
-const hostname = "localhost";
-const url = "mongodb://localhost:27017/messagedb";
+const express = require("express");
+const mongoose = require("mongoose");
+const cookieParser = require("cookie-parser");
+const session = require("express-session");
+const passport = require("passport");
+
+const msgRouter = require("./routes/messageRouter");
+const authenticate = require("./authenticate");
+var userRouter = require("./routes/userRouter");
 
 const options = {
   useNewUrlParser: true,
@@ -14,68 +19,38 @@ const options = {
   socketTimeoutMS: 45000, // Close sockets after 45 seconds of inactivity
   family: 4, // Use IPv4, skip trying IPv6
 };
-
-const http = require("http");
-const express = require("express");
-
-const mongoose = require("mongoose");
-
-const cookieParser = require("cookie-parser");
-const session = require("express-session");
-
-var connect = mongoose.connect(url, options);
-
-// create express app
 var app = express();
 
-// use cookieparser
-app.use(cookieParser());
-// use session with secret key
+var connect = mongoose.connect("mongodb://localhost:27017/messagedb", options);
+
+app.use(cookieParser()); // use cookieparser
 app.use(
+  // use session with secret key
   session({
     secret: "Very very secret!",
     resave: false,
     saveUninitialized: false,
   })
 );
-
-// require passport and our authentication setup
-const passport = require("passport");
-const authenticate = require("./authenticate");
-
-// init passport
-// passport session init
-app.use(passport.initialize());
-app.use(passport.session());
-
-// public endpoint here before user auth?
-
-var userRouter = require("./routes/userRouter");
+app.use(passport.initialize()); // init passport
+app.use(passport.session()); // passport session init
 app.use("/users", userRouter);
-
-function auth(req, res, next) {
-  //console.log(req.headers);
-  if (req.user) {
-    // is the user data included in the request?
-    next();
-  } else {
-    var err = new Error("Not authenticated!");
-    err.status = 403;
-    next(err);
-  }
-}
-// Use the authentication function before any other middleware
-app.use(auth);
-
-// get the routes and mount them
-const msgRouter = require("./routes/messageRouter");
-
+//app.use(auth);
 app.use("/messages", msgRouter);
 
-// create the server
-var server = http.createServer(app);
+// function auth(req, res, next) {
+//   //console.log(req.headers);
+//   if (req.user) {
+//     // is the user data included in the request?
+//     next();
+//   } else {
+//     var err = new Error("Not authenticated!");
+//     err.status = 403;
+//     next(err);
+//   }
+// }
 
 // start the server
-server.listen(port, hostname, () => {
-  console.log("Server started!");
+app.listen("8080", "localhost", () => {
+  console.log("Listening on port 8080");
 });

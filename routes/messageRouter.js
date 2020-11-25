@@ -1,137 +1,113 @@
-const express = require('express');
-const bodyParser = require('body-parser');
+const express = require("express");
+
 const messageRouter = express.Router();
 
-const Messages = require('../models/messages');
+const Messages = require("../models/messages");
 
-messageRouter.use(bodyParser.json());
+messageRouter.use(express.json());
 
-// The root endpoint of our messagerouter:
-// ----------------------------------------
-messageRouter.route('/')
+messageRouter
+  .route("/")
 
-// GET
-.get( (req, res, next) => {
-
+  .get((req, res, next) => {
     // Find all messages and return them as JSON
     Messages.find({}) // find every message
 
-    .then( (msgs) => {
+      .then((msgs) => {
         res.statusCode = 200;
-        res.setHeader('Content-Type','application/json');
+        res.setHeader("Content-Type", "application/json");
         res.json(msgs);
         //res.end("GET request handled!");
-    });
-}
-)
-// POST
-.post( (req, res, next) => {
+      });
+  })
+  .post((req, res, next) => {
     // creates a new message-object from http-body
     Messages.create(req.body)
-    .then( (msg)  => {
-        console.log('Message created: ' + msg);
+      .then((msg) => {
+        console.log("Message created: " + msg);
         res.statusCode = 200;
-        res.setHeader('Content-Type','application/json');
+        res.setHeader("Content-Type", "application/json");
         res.json(msg);
-    })
-    .catch ( (err) => next(err))
-});
-// PUT? (Update)
+      })
+      .catch((err) => next(err));
+  });
 
-// DELETE?
+messageRouter
+  .route("/login")
 
+  .get((req, res) => {})
 
-// The messageId-endpoint of our messagerouter:
-// ----------------------------------------
-messageRouter.route('/:messageId')
+  .post((req, res) => {
+    //req.body.username
+    //req.body.password
+  });
+messageRouter
+  .route("/:messageId")
 
-// GET request
-.get( (req, res, next) => {
+  .get((req, res, next) => {
     // Find given message
-    Messages.findById(req.params.messageId) 
+    Messages.findById(req.params.messageId)
 
-    .then( (msg) => {
+      .then((msg) => {
         res.statusCode = 200;
-        res.setHeader('Content-Type','application/json');
+        res.setHeader("Content-Type", "application/json");
         res.json(msg);
         //res.end("GET request handled!");
-    })
-    .catch ( (err) => next(err));
-}
-)
+      })
+      .catch((err) => next(err));
+  })
 
-// .put 
-// Messages.findByIdAndUpdate
-
-// DEL request
-.delete( (req, res, next) => {
-
+  .delete((req, res, next) => {
     Messages.findByIdAndRemove(req.params.messageId)
 
-    .then( (resp) =>  {
+      .then((resp) => {
         res.statusCode = 200;
-        res.setHeader('Content-Type','application/json');
+        res.setHeader("Content-Type", "application/json");
         res.json(resp);
-    })
-    .catch ( (err) => next(err))
-}
+      })
+      .catch((err) => next(err));
+  });
 
-);
+messageRouter
+  .route("/:messageId/comments")
 
-// The messageId/comments-endpoint of our messagerouter:
-// ----------------------------------------
-messageRouter.route('/:messageId/comments')
-
-.get( (req, res, next) => {
-
+  .get((req, res, next) => {
     Messages.findById(req.params.messageId)
 
-    .then( (msg) => {
+      .then((msg) => {
+        if (msg != null) {
+          res.statusCode = 200;
+          res.setHeader("Content-Type", "application/json");
+          res.json(msg.comments);
+        } else {
+          // virhe!!!
+          res.statusCode = 404;
+          res.setHeader("Content-Type", "text/html");
+          res.end("Message not found!");
+        }
+      })
+      .catch((err) => next(err));
+  })
 
-        if (msg != null){
+  .post((req, res, next) => {
+    Messages.findById(req.params.messageId)
+      .then((msg) => {
+        if (msg != null) {
+          // push new comment(s) into the message
+          msg.comments.push(req.body);
+          msg.save().then((msg) => {
             res.statusCode = 200;
-            res.setHeader('Content-Type', 'application/json');
-            res.json(msg.comments);
+            res.setHeader("Content-Type", "application/json");
+            res.json(msg);
+          });
+        } else {
+          // virhe!!!
+          res.statusCode = 404;
+          res.setHeader("Content-Type", "text/html");
+          res.end("Message not found!");
         }
-        else {
-            // virhe!!!
-            res.statusCode = 404;
-            res.setHeader('Content-Type', 'text/html');
-            res.end("Message not found!");
-        }
-    }
-    )
-    .catch( (err) => next(err));
-}
-)
-
-// This enables to post new comments to given message
-.post((req, res, next) => {
-    Messages.findById(req.params.messageId)
-    .then( (msg) => {
-        
-        if (msg != null){
-            // push new comment(s) into the message
-            msg.comments.push(req.body);
-            msg.save()
-            .then( (msg) => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
-                res.json(msg);
-            })
-        }
-        else {
-            // virhe!!!
-            res.statusCode = 404;
-            res.setHeader('Content-Type', 'text/html');
-            res.end("Message not found!");
-        }
-    })
-    .catch ( (err) => next(err));
-});
-
-/*
-.put();
-*/
+      })
+      .catch((err) => next(err));
+  });
 
 module.exports = messageRouter;
