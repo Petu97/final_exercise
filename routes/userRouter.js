@@ -1,5 +1,5 @@
 const express = require("express");
-const User = require("../models/user");
+const User = require("../models/users");
 const session = require("express-session");
 const passport = require("passport");
 
@@ -37,9 +37,9 @@ userRouter.use(express.urlencoded({ extended: true }));
 userRouter.get("/signup", (req, res) => {
   res.render("signup.ejs");
 });
-userRouter.post("/signup", (req, res) => {
-  User.create(req.body)
-    .then((msg) => {
+userRouter.post("/signup", (req, res, next) => {
+  User.create({ name: req.body.username, password: req.body.password })
+    .then(() => {
       res.render("login.ejs");
     })
     .catch((err) => next(err));
