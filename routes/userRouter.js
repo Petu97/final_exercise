@@ -37,12 +37,15 @@ userRouter.use(express.urlencoded({ extended: true }));
 userRouter.get("/signup", (req, res) => {
   res.render("signup.ejs");
 });
-userRouter.post("/signup", (req, res, next) => {
+userRouter.post("/signup", (req, res) => {
   User.create({ name: req.body.username, password: req.body.password })
     .then(() => {
       res.render("login.ejs");
     })
-    .catch((err) => next(err));
+    .catch((err) => {
+      console.log(err);
+      res.render("signup.ejs");
+    });
 });
 
 userRouter.get("/login", (req, res) => {
@@ -50,7 +53,16 @@ userRouter.get("/login", (req, res) => {
 });
 
 userRouter.post("/login", (req, res) => {
-  res.render("login.ejs");
+  User.find({ name: req.body.username })
+    .then((msg) => {
+      console.log(msg.$.password);
+      if (msg.password === req.body.password) console.log("Login successfull");
+      else res.render("login.ejs");
+    })
+    .catch((err) => {
+      console.log(err);
+      res.render("login.ejs");
+    });
 });
 
 // POST for login - data provided in request body (as JSON)
