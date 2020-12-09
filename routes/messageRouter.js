@@ -1,5 +1,5 @@
 const express = require("express");
-
+const ejs = require("ejs");
 const messageRouter = express.Router();
 
 const Messages = require("../models/messages");
@@ -11,6 +11,7 @@ messageRouter
 
   .get((req, res, next) => {
     // Find all messages and return them as JSON
+
     Messages.find({}) // find every message
 
       .then((msgs) => {
@@ -32,15 +33,6 @@ messageRouter
       .catch((err) => next(err));
   });
 
-messageRouter
-  .route("/login")
-
-  .get((req, res) => {})
-
-  .post((req, res) => {
-    //req.body.username
-    //req.body.password
-  });
 messageRouter
   .route("/:messageId")
 

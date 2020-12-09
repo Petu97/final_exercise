@@ -25,7 +25,6 @@ var connect = mongoose.connect("mongodb://localhost:27017/messagedb", options);
 
 app.use(cookieParser()); // use cookieparser
 app.use(
-  // use session with secret key
   session({
     secret: "Very very secret!",
     resave: false,
@@ -36,7 +35,7 @@ app.use(passport.initialize()); // init passport
 app.use(passport.session()); // passport session init
 app.use("/users", userRouter);
 //app.use(auth);
-app.use("/messages", msgRouter);
+app.use("/login", msgRouter);
 
 // function auth(req, res, next) {
 //   //console.log(req.headers);
