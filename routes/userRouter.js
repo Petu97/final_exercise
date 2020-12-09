@@ -1,9 +1,7 @@
 const express = require("express");
 const User = require("../models/user");
-//const bodyParser = require("body-parser");
 const session = require("express-session");
 const passport = require("passport");
-const ejs = require("ejs");
 
 var userRouter = express.Router();
 // Use body-parser to get data from body
@@ -40,7 +38,11 @@ userRouter.get("/signup", (req, res) => {
   res.render("signup.ejs");
 });
 userRouter.post("/signup", (req, res) => {
-  Users.res.render("login.ejs");
+  User.create(req.body)
+    .then((msg) => {
+      res.render("login.ejs");
+    })
+    .catch((err) => next(err));
 });
 
 userRouter.get("/login", (req, res) => {
