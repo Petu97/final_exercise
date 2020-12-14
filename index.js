@@ -35,12 +35,12 @@ app.use(passport.initialize()); // init passport
 app.use(passport.session()); // passport session init
 app.use("/users", userRouter);
 //app.use(auth);
-app.use("/login", msgRouter);
+app.use("/menu", msgRouter);
 
 // function auth(req, res, next) {
 //   //console.log(req.headers);
 //   if (req.user) {
-//     // is the user data included in the request?
+//     // is the user data included in the request?s
 //     next();
 //   } else {
 //     var err = new Error("Not authenticated!");

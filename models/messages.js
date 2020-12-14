@@ -1,45 +1,55 @@
-const mongoose = require('mongoose');
+const mongoose = require("mongoose");
 
 const Schema = mongoose.Schema;
 
-const commentSchema = new Schema({
-    content: {
-        type: String,
-        required: true
+const commentSchema = new Schema(
+  {
+    topic: {
+      type: String,
+      required: true,
     },
     author: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     rating: {
-        type: Number,
-        required: true
-    }
-},{timestamps: true});
+      type: Number,
+      required: true,
+    },
+    messageid: {
+      type: String,
+      required: true,
+    },
+  },
+  { timestamps: true }
+);
 
-const messageSchema = new Schema({
+const messageSchema = new Schema(
+  {
     title: {
-        type: String,
-        required: true,
-        unique: true
+      type: String,
+      required: true,
+      unique: true,
     },
     content: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     author: {
-        type: String,
-        required: true
+      type: String,
+      required: true,
     },
     category: {
-        type: String,
-        default: 'useless'
+      type: String,
+      default: "useless",
     },
-    comments: [commentSchema]
-},{
-    timestamps: true
-});
+    comments: [commentSchema],
+  },
+  {
+    timestamps: true,
+  }
+);
 
-var Messages = mongoose.model('Message', messageSchema);
+var Messages = mongoose.model("Message", messageSchema);
 
 module.exports = Messages;

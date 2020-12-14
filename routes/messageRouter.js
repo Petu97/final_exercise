@@ -7,34 +7,32 @@ const Messages = require("../models/messages");
 messageRouter.use(express.json());
 
 messageRouter
-  .route("/")
+  .route("/main")
 
   .get((req, res, next) => {
-    // Find all messages and return them as JSON
-
-    Messages.find({}) // find every message
-
-      .then((msgs) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(msgs);
-        //res.end("GET request handled!");
+    Messages.find({}).then((msgs) => {
+      items = [];
+      msgs.forEach((element) => {
+        items.push([element.rating, element.author]);
       });
+      console.log(items);
+      res.render("mainpage.ejs", { messages: items });
+      items = [];
+    });
   })
   .post((req, res, next) => {
-    // creates a new message-object from http-body
-    Messages.create(req.body)
-      .then((msg) => {
-        console.log("Message created: " + msg);
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(msg);
-      })
+    Messages.create({
+      topic: req.body.topic,
+      author: "placeholder",
+      rating: 0,
+      messageId: 1,
+    })
+      .then((msg) => {})
       .catch((err) => next(err));
   });
 
 messageRouter
-  .route("/:messageId")
+  .route("/main/:messageId")
 
   .get((req, res, next) => {
     // Find given message
