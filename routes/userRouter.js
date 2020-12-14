@@ -53,7 +53,7 @@ userRouter.get("/login", (req, res) => {
 });
 
 userRouter.post("/login", (req, res) => {
-  User.find({ name: req.body.username })
+  User.findOne({ name: req.body.username })
     .then((msg) => {
       console.log(msg.$.password);
       if (msg.password === req.body.password) console.log("Login successfull");
