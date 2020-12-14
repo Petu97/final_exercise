@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const commentSchema = new Schema(
   {
-    topic: {
+    message: {
       type: String,
       required: true,
     },
@@ -16,7 +16,7 @@ const commentSchema = new Schema(
       type: Number,
       required: true,
     },
-    messageid: {
+    commentid: {
       type: String,
       required: true,
     },
@@ -26,22 +26,22 @@ const commentSchema = new Schema(
 
 const messageSchema = new Schema(
   {
-    title: {
+    topic: {
       type: String,
       required: true,
       unique: true,
-    },
-    content: {
-      type: String,
-      required: true,
     },
     author: {
       type: String,
       required: true,
     },
-    category: {
-      type: String,
-      default: "useless",
+    rating: {
+      type: Number,
+      required: true,
+    },
+    messageId: {
+      type: Number,
+      required: true,
     },
     comments: [commentSchema],
   },

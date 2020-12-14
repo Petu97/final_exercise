@@ -3,8 +3,8 @@ const ejs = require("ejs");
 const messageRouter = express.Router();
 
 const Messages = require("../models/messages");
-
 messageRouter.use(express.json());
+messageRouter.use(express.urlencoded({ extended: true }));
 
 messageRouter
   .route("/main")
@@ -13,7 +13,7 @@ messageRouter
     Messages.find({}).then((msgs) => {
       items = [];
       msgs.forEach((element) => {
-        items.push([element.rating, element.author]);
+        items.push([element.topic, element.author, element.rating]);
       });
       console.log(items);
       res.render("mainpage.ejs", { messages: items });
@@ -27,7 +27,9 @@ messageRouter
       rating: 0,
       messageId: 1,
     })
-      .then((msg) => {})
+      .then((msg) => {
+        console.log(msg);
+      })
       .catch((err) => next(err));
   });
 
@@ -36,13 +38,12 @@ messageRouter
 
   .get((req, res, next) => {
     // Find given message
-    Messages.findById(req.params.messageId)
+    Messages.findOne({ messageId: req.params.messageId })
 
       .then((msg) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(msg);
-        //res.end("GET request handled!");
+        items = [msg.author, msg.topic, msg.rating];
+        res.render("topic.ejs", { messages: items });
+        items = [];
       })
       .catch((err) => next(err));
   })
