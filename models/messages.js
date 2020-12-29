@@ -16,10 +16,6 @@ const commentSchema = new Schema(
       type: Number,
       required: true,
     },
-    commentid: {
-      type: String,
-      required: true,
-    },
   },
   { timestamps: true }
 );

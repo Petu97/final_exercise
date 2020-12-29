@@ -3,15 +3,30 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Main Page</title>
+    <title>Fakkit</title>
   </head>
   <body>
-    <p>Here are the messages</p>
+    <h1>Welcome to Fakkit</h1>
+    <h3>Your favourite fake reddit</h3>
+    <p>Topics:</p>
     <% if (locals.messages) { messages.forEach((element) => { %>
-    <p><%= element %></p>
+    <p><%= element[0]+" || "+ element[1]+" || "+  element[2]%></p>
+    <form method="post" action="/fakkit/topics/<%=element[3]%>/like">
+      <button type="submit">Like</button>
+    </form>
+    <form method="post" action="/fakkit/topics/<%=element[3]%>/dislike">
+      <button type="submit">Dislike</button>
+    </form>
+    <a href="/fakkit/topics/<%= element[3]%>">View comments</a>
     <% })}; %>
-    <form method="post" action="/menu/main">
-      <label for="topic">Topic:</label><br />
+    <script>
+      function sendLike() {
+        console.log("sendMessage ran " + messageId)
+      }
+    </script>
+  
+    <form method="post" action="/fakkit/topics">
+      <label for="topic">Create a new topicTopic:</label><br />
       <input name="topic" type="text" placeholder="New Topic" /><br />
       <button type="submit" value="submit" id="send-button">Send</button
         ><br /><br />

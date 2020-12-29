@@ -6,10 +6,26 @@
     <title>Main Page</title>
   </head>
   <body>
-    <p>Here are the messages</p>
-    <% if (locals.messages) { %>
+    <p>Topic</p>
+    <% if (locals.topicInfo) { var commentNum = 0 %>
+    <p><%= topicInfo %></p>
+    <% comments.forEach((element) => { %>
+    <p><%= element.message+" || "+ element.author+" || "+ element.rating%></p>
+    <form
+      method="post"
+      action="/fakkit/topics/<%=topicId%>/<%=commentNum%>/like"
+    >
+      <button type="submit">Like</button>
+    </form>
+    <form method="post" action="/fakkit/topics/<%=topicId%>/commentNum/dislike">
+      <button type="submit">Dislike</button>
+    </form>
+    <% commentNum++%> <% }) %> <% } %>
 
-    <p><%= messages %></p>
-    <% } %>
+    <form method="post" action="/fakkit/topics/<%= topicId%>">
+      <label for="comment">Comment:</label><br />
+      <input name="comment" type="text" placeholder="New Comment" /><br />
+      <button type="submit" value="submit" id="send-button">Send</button>
+    </form>
   </body>
 </html>

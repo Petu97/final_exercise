@@ -6,48 +6,98 @@ const Messages = require("../models/messages");
 messageRouter.use(express.json());
 messageRouter.use(express.urlencoded({ extended: true }));
 
+// var indexNumber = Messages.countDocuments({});
+// console.log(indexNumber);
+
 messageRouter
-  .route("/main")
+  .route("/topics")
 
   .get((req, res, next) => {
     Messages.find({}).then((msgs) => {
       items = [];
       msgs.forEach((element) => {
-        items.push([element.topic, element.author, element.rating]);
+        items.push([
+          element.topic,
+          element.author,
+          element.rating,
+          element.messageId,
+        ]);
       });
-      console.log(items);
       res.render("mainpage.ejs", { messages: items });
       items = [];
     });
   })
+  //Post a new message
   .post((req, res, next) => {
-    Messages.create({
-      topic: req.body.topic,
-      author: "placeholder",
-      rating: 0,
-      messageId: 1,
-    })
-      .then((msg) => {
-        console.log(msg);
+    Messages.estimatedDocumentCount()
+      .then((count) => {
+        Messages.create({
+          topic: req.body.topic,
+          author: "Angry hobo",
+          rating: 0,
+          messageId: count,
+        })
+          .then(() => {
+            res.redirect("/fakkit/topics");
+          })
+          .catch((err) => next(err));
       })
-      .catch((err) => next(err));
+      .catch((err) => {
+        console.log(err);
+      });
   });
-
+//Individual topics
 messageRouter
-  .route("/main/:messageId")
-
+  .route("/topics/:messageId/")
+  // Find given message
   .get((req, res, next) => {
-    // Find given message
     Messages.findOne({ messageId: req.params.messageId })
-
       .then((msg) => {
-        items = [msg.author, msg.topic, msg.rating];
-        res.render("topic.ejs", { messages: items });
-        items = [];
+        if (msg !== null) {
+          basicTopicInfo = [msg.author, msg.topic, msg.rating];
+          topicComments = [];
+          msg.comments.forEach((element) => {
+            topicComments.push(element.message, element.author, element.rating);
+          });
+          res.render("topic.ejs", {
+            topicId: msg.messageId,
+            topicInfo: basicTopicInfo,
+            comments: msg.comments,
+          });
+          topicComments = [];
+          basicTopicInfo = [];
+        } else
+          res.render("error.ejs", {
+            message: "Could not find a topic under given id",
+          });
       })
-      .catch((err) => next(err));
+      .catch((err) => {
+        res.render("error.ejs", {
+          message: "Invalid id: id has to be a number value",
+        });
+      });
   })
-
+  //add comment
+  .post((req, res, next) => {
+    console.log("Post was ran");
+    Messages.findOne({ messageId: req.params.messageId })
+      .then((msg) => {
+        msg.comments.push({
+          message: req.body.comment,
+          author: "placeholder",
+          rating: 0,
+        });
+        msg
+          .save()
+          .then((msg) => {})
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  })
   .delete((req, res, next) => {
     Messages.findByIdAndRemove(req.params.messageId)
 
@@ -58,13 +108,48 @@ messageRouter
       })
       .catch((err) => next(err));
   });
+//Like
+messageRouter.route("/topics/:messageId/like").post((req, res) => {
+  like(req, res, 1, "topic", req.params.messageId);
+});
+//Dislike
+messageRouter.route("/topics/:messageId/dislike").post((req, res) => {
+  like(req, res, -1, "topic", req.params.messageId);
+});
+
+messageRouter.route("/topics/:messageId/:commentId/like").post((req, res) => {
+  like(req, res, 1, "comment", req.params.messageId, req.params.commentId);
+});
+
+function like(req, res, value, type, id, cid) {
+  if (type === "topic") {
+    Messages.findOneAndUpdate({ messageId: id }, { $inc: { rating: value } })
+      .then(() => {
+        res.redirect("back");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  } else if (type === "comment") {
+    Messages.findOneAndUpdate(
+      { messageId: id, "commets.indexOf()": cid },
+      { $inc: { rating: value } }
+    )
+      .then((obj) => {
+        console.log(obj);
+        res.redirect("back");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  }
+}
 
 messageRouter
   .route("/:messageId/comments")
 
   .get((req, res, next) => {
     Messages.findById(req.params.messageId)
-
       .then((msg) => {
         if (msg != null) {
           res.statusCode = 200;
@@ -81,24 +166,27 @@ messageRouter
   })
 
   .post((req, res, next) => {
-    Messages.findById(req.params.messageId)
+    Messages.findOne({ messageId: req.params.messageId })
       .then((msg) => {
-        if (msg != null) {
-          // push new comment(s) into the message
-          msg.comments.push(req.body);
-          msg.save().then((msg) => {
-            res.statusCode = 200;
-            res.setHeader("Content-Type", "application/json");
-            res.json(msg);
+        console.log("messageid was found");
+        msg.comments.push({
+          message: req.body.comment,
+          author: "placeholder",
+          rating: 0,
+          commentid: 1,
+        });
+        msg
+          .save()
+          .then((msg) => {
+            console.log("Success!");
+          })
+          .catch((err) => {
+            console.log(err);
           });
-        } else {
-          // virhe!!!
-          res.statusCode = 404;
-          res.setHeader("Content-Type", "text/html");
-          res.end("Message not found!");
-        }
       })
-      .catch((err) => next(err));
+      .catch((err) => {
+        console.log(err);
+      });
   });
 
 module.exports = messageRouter;

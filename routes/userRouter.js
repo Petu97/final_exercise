@@ -1,10 +1,11 @@
 const express = require("express");
+const ejs = require("ejs");
+var userRouter = express.Router();
+
 const User = require("../models/users");
 const session = require("express-session");
 const passport = require("passport");
 
-var userRouter = express.Router();
-// Use body-parser to get data from body
 userRouter.use(express.json());
 userRouter.use(express.urlencoded({ extended: true }));
 
@@ -52,18 +53,31 @@ userRouter.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
-userRouter.post("/login", (req, res) => {
-  User.findOne({ name: req.body.username })
-    .then((msg) => {
-      console.log(msg.$.password);
-      if (msg.password === req.body.password) console.log("Login successfull");
-      else res.render("login.ejs");
-    })
-    .catch((err) => {
-      console.log(err);
-      res.render("login.ejs");
-    });
-});
+userRouter.post(
+  "/login",
+  passport.authenticate("local", {
+    successRedirect: "/fakkit/topics",
+    failureRedirect: "/users/login",
+    //                              failureFlash: true},
+    // failureFlash: "Incorrect username or password!",
+  })
+);
+
+// User.findOne({ name: req.body.username })
+//   .then((msg) => {
+//     if (msg.password === req.body.password) {
+//       passport.authenticate("local", {
+//         successRedirect: "/fakkit/mainpage",
+//         failureRedirect: "/users/login",
+//         //                              failureFlash: true},
+//         failureFlash: "Incorrect username or password!",
+//       });
+//     } else res.render("login.ejs");
+//   })
+//   .catch((err) => {
+//     console.log(err);
+//     res.render("login.ejs");
+//   });
 
 // POST for login - data provided in request body (as JSON)
 // remember to provide username and password
