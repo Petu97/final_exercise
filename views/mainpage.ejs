@@ -8,6 +8,9 @@
   <body>
     <h1>Welcome to Fakkit</h1>
     <h3>Your favourite fake reddit</h3>
+    <form method="get" action="/users/logout">
+    <button type="submit" value="Logout" >Logout</button>
+    </form>
     <p>Topics:</p>
     <% if (locals.messages) { messages.forEach((element) => { %>
     <p><%= element[0]+" || "+ element[1]+" || "+  element[2]%></p>

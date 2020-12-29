@@ -2,7 +2,9 @@ const express = require("express");
 const ejs = require("ejs");
 const messageRouter = express.Router();
 
+const passportSessionCheck = require("../passportSessionCheck");
 const Messages = require("../models/messages");
+const users = require("../models/users");
 messageRouter.use(express.json());
 messageRouter.use(express.urlencoded({ extended: true }));
 
@@ -28,12 +30,12 @@ messageRouter
     });
   })
   //Post a new message
-  .post((req, res, next) => {
+  .post(passportSessionCheck, (req, res, next) => {
     Messages.estimatedDocumentCount()
       .then((count) => {
         Messages.create({
           topic: req.body.topic,
-          author: "Angry hobo",
+          author: req.user.name,
           rating: 0,
           messageId: count,
         })
@@ -78,13 +80,13 @@ messageRouter
       });
   })
   //add comment
-  .post((req, res, next) => {
+  .post(passportSessionCheck, (req, res, next) => {
     console.log("Post was ran");
     Messages.findOne({ messageId: req.params.messageId })
       .then((msg) => {
         msg.comments.push({
           message: req.body.comment,
-          author: "placeholder",
+          author: req.user.name,
           rating: 0,
         });
         msg
@@ -98,28 +100,31 @@ messageRouter
         console.log(err);
       });
   })
-  .delete((req, res, next) => {
-    Messages.findByIdAndRemove(req.params.messageId)
-
-      .then((resp) => {
-        res.statusCode = 200;
-        res.setHeader("Content-Type", "application/json");
-        res.json(resp);
+  .delete(passportSessionCheck, (req, res, next) => {
+    Messages.findByIdAndRemove({ messageId: req.params.messageId })
+      .then((msg) => {
+        console.log(msg);
       })
       .catch((err) => next(err));
   });
 //Like
-messageRouter.route("/topics/:messageId/like").post((req, res) => {
-  like(req, res, 1, "topic", req.params.messageId);
-});
+messageRouter
+  .route("/topics/:messageId/like")
+  .post(passportSessionCheck, (req, res) => {
+    like(req, res, 1, "topic", req.params.messageId);
+  });
 //Dislike
-messageRouter.route("/topics/:messageId/dislike").post((req, res) => {
-  like(req, res, -1, "topic", req.params.messageId);
-});
+messageRouter
+  .route("/topics/:messageId/dislike")
+  .post(passportSessionCheck, (req, res) => {
+    like(req, res, -1, "topic", req.params.messageId);
+  });
 
-messageRouter.route("/topics/:messageId/:commentId/like").post((req, res) => {
-  like(req, res, 1, "comment", req.params.messageId, req.params.commentId);
-});
+messageRouter
+  .route("/topics/:messageId/:commentId/like")
+  .post(passportSessionCheck, (req, res) => {
+    like(req, res, 1, "comment", req.params.messageId, req.params.commentId);
+  });
 
 function like(req, res, value, type, id, cid) {
   if (type === "topic") {

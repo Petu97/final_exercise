@@ -63,36 +63,15 @@ userRouter.post(
   })
 );
 
-// User.findOne({ name: req.body.username })
-//   .then((msg) => {
-//     if (msg.password === req.body.password) {
-//       passport.authenticate("local", {
-//         successRedirect: "/fakkit/mainpage",
-//         failureRedirect: "/users/login",
-//         //                              failureFlash: true},
-//         failureFlash: "Incorrect username or password!",
-//       });
-//     } else res.render("login.ejs");
-//   })
-//   .catch((err) => {
-//     console.log(err);
-//     res.render("login.ejs");
-//   });
-
-// POST for login - data provided in request body (as JSON)
-// remember to provide username and password
-
 // GET for logout
 userRouter.get("/logout", (req, res, next) => {
   if (req.session) {
-    // user is logged in
+    console.log(req.session);
     // destroy session
     req.session.destroy();
-    console.log("Session has been destroyed!");
-    // clear cookie
     res.clearCookie("session-id");
-    console.log("Cookie cleared from response.");
-    res.redirect("/");
+    console.log("Session has been destroyed!");
+    res.redirect("/users/login");
   } else {
     // user is not logged in
     var err = new Error("You are not logged in!");

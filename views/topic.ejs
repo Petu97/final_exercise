@@ -21,7 +21,9 @@
       <button type="submit">Dislike</button>
     </form>
     <% commentNum++%> <% }) %> <% } %>
-
+    <form method="delete" action="">
+      <button type="submit" value="submit">Delete topic</button>
+    </form>
     <form method="post" action="/fakkit/topics/<%= topicId%>">
       <label for="comment">Comment:</label><br />
       <input name="comment" type="text" placeholder="New Comment" /><br />
