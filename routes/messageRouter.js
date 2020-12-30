@@ -4,16 +4,13 @@ const messageRouter = express.Router();
 
 const passportSessionCheck = require("../passportSessionCheck");
 const Messages = require("../models/messages");
-const users = require("../models/users");
+//const users = require("../models/users");
 messageRouter.use(express.json());
 messageRouter.use(express.urlencoded({ extended: true }));
 
-// var indexNumber = Messages.countDocuments({});
-// console.log(indexNumber);
-
 messageRouter
   .route("/topics")
-
+  //get the main page
   .get((req, res, next) => {
     Messages.find({}).then((msgs) => {
       items = [];
@@ -29,7 +26,7 @@ messageRouter
       items = [];
     });
   })
-  //Post a new message
+  //Post a new topic
   .post(passportSessionCheck, (req, res, next) => {
     Messages.estimatedDocumentCount()
       .then((count) => {
@@ -37,7 +34,7 @@ messageRouter
           topic: req.body.topic,
           author: req.user.name,
           rating: 0,
-          messageId: count,
+          messageId: count, //the number of items in collection works as an "id"
         })
           .then(() => {
             res.redirect("/fakkit/topics");
@@ -48,10 +45,10 @@ messageRouter
         console.log(err);
       });
   });
-//Individual topics
+
 messageRouter
   .route("/topics/:messageId/")
-  // Find given message
+  //get an individual topic by id
   .get((req, res, next) => {
     Messages.findOne({ messageId: req.params.messageId })
       .then((msg) => {
@@ -81,7 +78,6 @@ messageRouter
   })
   //add comment
   .post(passportSessionCheck, (req, res, next) => {
-    console.log("Post was ran");
     Messages.findOne({ messageId: req.params.messageId })
       .then((msg) => {
         msg.comments.push({
@@ -91,7 +87,9 @@ messageRouter
         });
         msg
           .save()
-          .then((msg) => {})
+          .then(() => {
+            res.redirect("back");
+          })
           .catch((err) => {
             console.log(err);
           });
@@ -101,19 +99,26 @@ messageRouter
       });
   })
   .delete(passportSessionCheck, (req, res, next) => {
-    Messages.findByIdAndRemove({ messageId: req.params.messageId })
+    Messages.findOneAndRemove({ messageId: req.params.messageId })
       .then((msg) => {
         console.log(msg);
       })
       .catch((err) => next(err));
+  })
+  .put(passportSessionCheck, (req, res, next) => {
+    Messages.findOneAndUpdate({
+      messageId: req.params.messageId,
+      topic: req.body.newtopic,
+      author: req.user.name,
+    }).then((msg) => {});
   });
-//Like
+//Topic like
 messageRouter
   .route("/topics/:messageId/like")
   .post(passportSessionCheck, (req, res) => {
     like(req, res, 1, "topic", req.params.messageId);
   });
-//Dislike
+//Topic dislike
 messageRouter
   .route("/topics/:messageId/dislike")
   .post(passportSessionCheck, (req, res) => {
@@ -125,10 +130,10 @@ messageRouter
   .post(passportSessionCheck, (req, res) => {
     like(req, res, 1, "comment", req.params.messageId, req.params.commentId);
   });
-
-function like(req, res, value, type, id, cid) {
+//req, res, added value (-1 or +1), type (commnet/message), Message id, Comment id
+function like(req, res, value, type, mId, cId) {
   if (type === "topic") {
-    Messages.findOneAndUpdate({ messageId: id }, { $inc: { rating: value } })
+    Messages.findOneAndUpdate({ messageId: mId }, { $inc: { rating: value } })
       .then(() => {
         res.redirect("back");
       })
@@ -137,7 +142,7 @@ function like(req, res, value, type, id, cid) {
       });
   } else if (type === "comment") {
     Messages.findOneAndUpdate(
-      { messageId: id, "commets.indexOf()": cid },
+      { messageId: mId, "commets.indexOf()": cId },
       { $inc: { rating: value } }
     )
       .then((obj) => {
@@ -170,13 +175,13 @@ messageRouter
       .catch((err) => next(err));
   })
 
-  .post((req, res, next) => {
+  .post(passportSessionCheck, (req, res, next) => {
     Messages.findOne({ messageId: req.params.messageId })
       .then((msg) => {
         console.log("messageid was found");
         msg.comments.push({
           message: req.body.comment,
-          author: "placeholder",
+          author: req.user.name,
           rating: 0,
           commentid: 1,
         });
