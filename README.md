@@ -6,6 +6,8 @@ This application is a simple platform for conversations, kind of like reddit, he
 
 Note: This application doesn't use the same database layout as teacher's. You can find the mongoDB schemas i use in 'models' folder. For me the database is called 'messagedb' and it consists of 2 collections: messages and users.
 
+Another note: HTML5 does not support PUT and DELETE requests, so i haven't included modification or delete functions. However i left rough examples of them in code.
+
 ## Application consists of:
 
 index.js - Works as a "master" server file: establishes connection to database, initializes sessions, passport authentication and routing, creates server.
