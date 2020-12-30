@@ -10,9 +10,9 @@ Another note: HTML5 does not support PUT and DELETE requests, so i haven't inclu
 
 ## Quick links
 
-Login page [http://localhost:8080/users/login/]
+Login page <http://localhost:8080/users/login/>
 
-Topics page [http://localhost:8080/fakkit/topics/]
+Topics page <http://localhost:8080/fakkit/topics/>
 
 ## Application consists of:
 
