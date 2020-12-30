@@ -1,43 +1,19 @@
 const express = require("express");
-const ejs = require("ejs");
 var userRouter = express.Router();
-
 const User = require("../models/users");
-const session = require("express-session");
 const passport = require("passport");
 
+//express bodyparser
 userRouter.use(express.json());
 userRouter.use(express.urlencoded({ extended: true }));
+//const session = require("express-session");
+//const ejs = require("ejs");
 
-// This router is supposed to be 'mounted' to e.g. /users
-// routes
-
-// POST for signup
-// userRouter.post("/signup", (req, res, next) => {
-//   console.log("Signup!");
-//   // Register new user
-//   User.register(
-//     new User({ username: req.body.username }),
-//     req.body.password,
-//     (err, user) => {
-//       if (err) {
-//         res.statusCode = 500;
-//         res.setHeader("Content-Type", "application/json");
-//         res.json({ err: err });
-//       } else {
-//         // User registration was successful, let's authenticate the user
-//         passport.authenticate("local")(req, res, () => {
-//           res.statusCode = 200;
-//           res.setHeader("Content-Type", "application/json");
-//           res.json({ status: "Registration successful! User logged in." });
-//         });
-//       }
-//     }
-//   );
-// });
+//return signup page to user
 userRouter.get("/signup", (req, res) => {
   res.render("signup.ejs");
 });
+//create account
 userRouter.post("/signup", (req, res) => {
   User.create({ name: req.body.username, password: req.body.password })
     .then(() => {
@@ -48,22 +24,21 @@ userRouter.post("/signup", (req, res) => {
       res.render("signup.ejs");
     });
 });
-
+//return login page to user
 userRouter.get("/login", (req, res) => {
   res.render("login.ejs");
 });
 
+//user login
 userRouter.post(
   "/login",
   passport.authenticate("local", {
     successRedirect: "/fakkit/topics",
     failureRedirect: "/users/login",
-    //                              failureFlash: true},
-    // failureFlash: "Incorrect username or password!",
   })
 );
 
-// GET for logout
+//User Logout
 userRouter.get("/logout", (req, res, next) => {
   if (req.session) {
     console.log(req.session);
