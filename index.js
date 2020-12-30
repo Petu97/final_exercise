@@ -6,7 +6,7 @@ const passport = require("passport");
 
 const msgRouter = require("./routes/messageRouter");
 const userRouter = require("./routes/userRouter");
-//const authenticate = require("./authenticate");
+const authenticate = require("./authenticate");
 
 const options = {
   useNewUrlParser: true,

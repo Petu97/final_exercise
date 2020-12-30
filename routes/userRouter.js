@@ -6,7 +6,7 @@ const passport = require("passport");
 //express bodyparser
 userRouter.use(express.json());
 userRouter.use(express.urlencoded({ extended: true }));
-const session = require("express-session");
+//const session = require("express-session");
 //const ejs = require("ejs");
 
 //return signup page to user
@@ -41,11 +41,9 @@ userRouter.post(
 //User Logout
 userRouter.get("/logout", (req, res, next) => {
   if (req.session) {
-    console.log(req.session);
     // destroy session
     req.session.destroy();
     res.clearCookie("session-id");
-    console.log("Session has been destroyed!");
     res.redirect("/users/login");
   } else {
     // user is not logged in
