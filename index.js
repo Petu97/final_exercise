@@ -5,8 +5,8 @@ const session = require("express-session");
 const passport = require("passport");
 
 const msgRouter = require("./routes/messageRouter");
-const authenticate = require("./authenticate");
-var userRouter = require("./routes/userRouter");
+const userRouter = require("./routes/userRouter");
+//const authenticate = require("./authenticate");
 
 const options = {
   useNewUrlParser: true,
@@ -20,8 +20,8 @@ const options = {
   family: 4, // Use IPv4, skip trying IPv6
 };
 var app = express();
-
-var connect = mongoose.connect("mongodb://localhost:27017/messagedb", options);
+//mongoose connection
+mongoose.connect("mongodb://localhost:27017/messagedb", options);
 
 app.use(cookieParser()); // use cookieparser
 app.use(
@@ -33,21 +33,8 @@ app.use(
 );
 app.use(passport.initialize()); // init passport
 app.use(passport.session()); // passport session init
-app.use("/users", userRouter);
-//app.use(auth);
-app.use("/fakkit", msgRouter);
-
-function auth(req, res, next) {
-  //console.log(req.headers);
-  if (req.user) {
-    // is the user data included in the request?
-    next();
-  } else {
-    var err = new Error("Not authenticated!");
-    err.status = 403;
-    next(err);
-  }
-}
+app.use("/users", userRouter); //userRouter
+app.use("/fakkit", msgRouter); //messageRouter
 
 // start the server
 app.listen("8080", "localhost", () => {

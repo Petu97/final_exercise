@@ -8,6 +8,12 @@ Note: This application doesn't use the same database layout as teacher's. You ca
 
 Another note: HTML5 does not support PUT and DELETE requests, so i haven't included modification or delete functions. However i left rough examples of them in code.
 
+## Quick links
+
+Login page [http://localhost:8080/users/login/]
+
+Topics page [http://localhost:8080/fakkit/topics/]
+
 ## Application consists of:
 
 index.js - Works as a "master" server file: establishes connection to database, initializes sessions, passport authentication and routing, creates server.
