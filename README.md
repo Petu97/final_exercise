@@ -10,14 +10,14 @@ Note: This application doesn't use the same database layout as teacher's. You ca
 
 index.js - Works as a "master" server file: establishes connection to database, initializes sessions, passport authentication and routing, creates server.
 
-## messageRouter
+### messageRouter
 
 Handles GET and POST requests for topics and commenting. Includes main page for viewing all topics, individual topics that you can access by clicking a link on the main page or by manually adding the id of the message to browser address. PassportSessionCheck middleware checks for user authentication before moving on(everyone can see topics and comments, but only logged in users can comment and rate). Router directs users to webpages, which you can find in the 'views' folder.
 
-## userRouter
+### userRouter
 
 This router handles the routing for login and signup operations. Just like messageRouter, this one directs users to webpages which can be found in 'views' folder.
 
-## views
+### views
 
 You can find the html webpages here. Since the idea of this course is to focus in backend, the frontend is pretty rough. I chose to use 'ejs' files for the frontend since i've worked with it before.
