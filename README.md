@@ -10,6 +10,8 @@ Another note: HTML5 does not support PUT and DELETE requests, so i haven't inclu
 
 ## Quick links
 
+Video <https://drive.google.com/file/d/1iczQZj08t0Aryb7A32sRrs0_0tJoyTwS/view?usp=sharing>
+
 Login page <http://localhost:8080/users/login/>
 
 Topics page <http://localhost:8080/fakkit/topics/>

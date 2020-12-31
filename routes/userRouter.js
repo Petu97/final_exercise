@@ -6,8 +6,6 @@ const passport = require("passport");
 //express bodyparser
 userRouter.use(express.json());
 userRouter.use(express.urlencoded({ extended: true }));
-//const session = require("express-session");
-//const ejs = require("ejs");
 
 //return signup page to user
 userRouter.get("/signup", (req, res) => {

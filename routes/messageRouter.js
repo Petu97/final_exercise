@@ -3,8 +3,7 @@ const messageRouter = express.Router();
 
 const passportSessionCheck = require("../passportSessionCheck");
 const Messages = require("../models/messages");
-//const ejs = require("ejs");
-//const users = require("../models/users");
+
 //express bodyparser
 messageRouter.use(express.json());
 messageRouter.use(express.urlencoded({ extended: true }));
@@ -171,49 +170,5 @@ function like(req, res, value, type, mId, cId) {
       });
   }
 }
-
-// messageRouter
-//   .route("/:messageId/comments")
-
-//   .get((req, res, next) => {
-//     Messages.findById(req.params.messageId)
-//       .then((msg) => {
-//         if (msg != null) {
-//           res.statusCode = 200;
-//           res.setHeader("Content-Type", "application/json");
-//           res.json(msg.comments);
-//         } else {
-//           // virhe!!!
-//           res.statusCode = 404;
-//           res.setHeader("Content-Type", "text/html");
-//           res.end("Message not found!");
-//         }
-//       })
-//       .catch((err) => next(err));
-//   })
-
-//   .post(passportSessionCheck, (req, res, next) => {
-//     Messages.findOne({ messageId: req.params.messageId })
-//       .then((msg) => {
-//         console.log("messageid was found");
-//         msg.comments.push({
-//           message: req.body.comment,
-//           author: req.user.name,
-//           rating: 0,
-//           commentid: 1,
-//         });
-//         msg
-//           .save()
-//           .then((msg) => {
-//             console.log("Success!");
-//           })
-//           .catch((err) => {
-//             console.log(err);
-//           });
-//       })
-//       .catch((err) => {
-//         console.log(err);
-//       });
-//   });
 
 module.exports = messageRouter;
