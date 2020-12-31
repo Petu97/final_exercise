@@ -104,9 +104,13 @@ messageRouter
   })
   //experimental delete request
   .delete(passportSessionCheck, (req, res, next) => {
-    Messages.findOneAndRemove({ messageId: req.params.messageId })
+    //"Removes" topic (reddit does not actually delete comments, only renders them empty)
+    Messages.findOneAndUpdate(
+      { messageId: req.params.messageId },
+      { topic: "DELETED" }
+    )
       .then((msg) => {
-        console.log(msg);
+        res.render("back");
       })
       .catch((err) => next(err));
   })
