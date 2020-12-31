@@ -10,10 +10,11 @@ Another note: HTML5 does not support PUT and DELETE requests, so i haven't inclu
 
 ## Getting started
 
-Download repostory
-Open project folder
-Write npm install to download node modules listed on package file
-Run server
+1. Download repostory
+2. Open project folder
+3. Write npm install to download node modules listed on package file
+4. Run server
+5. Open webpages (links below)
 
 ## Quick links
 
