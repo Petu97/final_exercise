@@ -8,6 +8,13 @@ Note: This application doesn't use the same database layout as teacher's. You ca
 
 Another note: HTML5 does not support PUT and DELETE requests, so i haven't included modification or delete functions. However i left rough examples of them in code.
 
+## Getting started
+
+Download repostory
+Open project folder
+Write npm install to download node modules listed on package file
+Run server
+
 ## Quick links
 
 Video <https://drive.google.com/file/d/1iczQZj08t0Aryb7A32sRrs0_0tJoyTwS/view?usp=sharing>
