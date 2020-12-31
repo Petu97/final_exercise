@@ -5,6 +5,7 @@ const passportSessionCheck = require("../passportSessionCheck");
 const Messages = require("../models/messages");
 //const ejs = require("ejs");
 //const users = require("../models/users");
+//express bodyparser
 messageRouter.use(express.json());
 messageRouter.use(express.urlencoded({ extended: true }));
 
@@ -86,6 +87,7 @@ messageRouter
           message: req.body.comment,
           author: req.user.name,
           rating: 0,
+          id: msg.comments.length,
         });
         msg
           .save()
@@ -128,12 +130,19 @@ messageRouter
   .post(passportSessionCheck, (req, res) => {
     like(req, res, -1, "topic", req.params.messageId);
   });
-
+//Comment like
 messageRouter
   .route("/topics/:messageId/:commentId/like")
   .post(passportSessionCheck, (req, res) => {
     like(req, res, 1, "comment", req.params.messageId, req.params.commentId);
   });
+//comment dislike
+messageRouter
+  .route("/topics/:messageId/:commentId/dislike")
+  .post(passportSessionCheck, (req, res) => {
+    like(req, res, -1, "comment", req.params.messageId, req.params.commentId);
+  });
+
 //req, res, value = (-1 or +1), type (commnet/message), Message id, Comment id
 function like(req, res, value, type, mId, cId) {
   if (type === "topic") {
@@ -147,11 +156,10 @@ function like(req, res, value, type, mId, cId) {
       });
   } else if (type === "comment") {
     Messages.findOneAndUpdate(
-      { messageId: mId, "commets.indexOf()": cId },
-      { $inc: { rating: value } }
+      { messageId: mId, "comments.id": cId },
+      { $inc: { "comments.$.rating": value } }
     )
       .then((obj) => {
-        console.log(obj);
         res.redirect("back");
       })
       .catch((err) => {
